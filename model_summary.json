@@ -1,0 +1,25 @@
+{
+    "best_model": "RandomForest",
+    "test_metrics": {
+        "accuracy": 0.6472997184540569,
+        "precision": 0.6862341228973566,
+        "recall": 0.8116118554608202,
+        "f1": 0.7436755952380952,
+        "roc_auc": 0.6749549847437364
+    },
+    "feature_cols": [
+        "Engine_RPM",
+        "Lub_Oil_Pressure",
+        "Fuel_Pressure",
+        "Coolant_Pressure",
+        "Lub_Oil_Temperature",
+        "Coolant_Temperature",
+        "Pressure_Index",
+        "Thermal_Index",
+        "Pressure_Temp_Ratio",
+        "RPM_Pressure_Ratio",
+        "Thermal_Deviation"
+    ],
+    "training_records": 15628,
+    "test_records": 3907
+}
