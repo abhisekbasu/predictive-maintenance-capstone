@@ -1,0 +1,59 @@
+name: Predictive Maintenance ML Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ml-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pandas numpy scikit-learn xgboost joblib mlflow huggingface_hub datasets scipy
+
+      - name: Load data from Hugging Face
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/load_data.py
+
+      - name: Train and evaluate model
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/train_model.py
+
+      - name: Register model on Hugging Face Model Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/register_model.py
+
+      - name: Push deployment files to HF Spaces
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: python scripts/push_space.py
+
+      - name: Auto-push updates to main branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.email 'abhisekbasu@gmail.com'
+          git config user.name 'abhisekbasu'
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/abhisekbasu/predictive-maintenance-capstone.git
+          git add -A
+          git diff --staged --quiet || git commit -m 'Pipeline run completed [skip ci]'
+          git push origin main
